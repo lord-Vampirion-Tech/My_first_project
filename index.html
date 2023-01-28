@@ -83,20 +83,23 @@
     appId: "1:466093813508:web:d171b2cc527c369e5cea51",
     measurementId: "G-K83NT83PGW"
   };
-
+  
   const app = initializeApp(firebaseConfig);
   const db = getDatabase();
   const dbRef = ref(db);
   const admin = $("#admin")
-  const DB = get(DBRef(dbRef, "background"));
-  $("body").css({ "background-image": `url(` + DB.val().url + `)` })
+  const DBUrl = await get(DBRef(dbRef, "background"));
+  const DBPassword = await get(DBRef(dbRef, "admin"));
+  $("body").css({ "background-image": `url(` + DBUrl.val().url + `)` })
 
   $(".admin").click(() => {
     $(".adminPanal").toggleClass('hide')
   })
 
+  console.log(DBPassword.val().password);
+
   $("#submit").click(( ) => {
-    if ($("#admin").val() == DB.val().password) {
+    if ($("#admin").val() == DBPassword.val().password) {
       location = "admin.html"
     } 
   })
