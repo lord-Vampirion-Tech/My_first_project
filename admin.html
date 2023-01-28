@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset='UTF-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <link rel='shortcut icon' href='https://sun9-33.userapi.com/c854320/v854320558/1f7ae1/M2tGKbkXJDo.jpg'
+    type='image/x-icon'>
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+  <title>Тест Название</title>
+</head>
+
+<body class="container">
+
+  <style>
+    html {
+      width: 100vw;
+      height: 100vh;
+      padding: 0;
+      margin: 0;
+    }
+
+    body {
+      background-position: center;
+      background-size: cover;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    p {
+      text-align: center;
+    }
+
+    .hide {
+      opacity: 0;
+    }
+
+    button {
+      background-color: black;
+      color: #fff;
+      cursor: pointer;
+    }
+    .index{
+      position: absolute;
+      left: 0;
+      top: 0;
+      color:black;
+      background: #fff;
+      width: 50px;
+      height: 50px;
+      border-radius: 100%;
+      margin: 10px;
+      cursor: pointer;
+    }
+    .img{
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      height: 500px;
+      width: 1000px;
+    }
+  </style>
+  <p>чтобы загрузить фон на сайт, нажмите на кнопку ниже,<br>выбирете нужное фото<br>и дождитесь о успешном завершении
+    зигрузки</p>
+  <button id="button">выбрать фото</button>
+  <input type="file" id="fileButton" class="hide">
+  <div class="img"></div>
+  <button onclick="location = `index.html`" class="index">site</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-app.js";
+    import { getStorage, ref, uploadBytes, deleteObject, getDownloadURL, } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-storage.js";
+    import { getDatabase, ref as DBRef, set, get } from "https://www.gstatic.com/firebasejs/9.16.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCRy7r-Jb6Z2zDGZpsjNpbNp6IbZ2iJGks",
+      authDomain: "test-3acdb.firebaseapp.com",
+      databaseURL: "https://test-3acdb-default-rtdb.firebaseio.com",
+      projectId: "test-3acdb",
+      storageBucket: "test-3acdb.appspot.com",
+      messagingSenderId: "466093813508",
+      appId: "1:466093813508:web:d171b2cc527c369e5cea51",
+      measurementId: "G-K83NT83PGW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const storage = getStorage();
+    const db = getDatabase()
+    const dbRef = ref(db);
+    const fileButton = $('#fileButton');
+
+    $('#button').click(function () {
+      $("#fileButton").trigger('click');
+    })
+
+
+    fileButton.change(async function (e) {
+      const background = await get(DBRef(dbRef, "background"));
+      deleteObject(ref(storage, "background/" + background.val().name))
+
+      const file = e.target.files[0];
+      const fileName = file.name;
+      const storageRef = ref(storage, "background/" + fileName);
+      const snapshot = await uploadBytes(storageRef, file);
+      set(DBRef(db, 'background'), {
+        url: await getDownloadURL(storageRef),
+        name: fileName
+      });
+      $(".img").css({ "background-image": `url(` + await getDownloadURL(storageRef) + `)` })
+      alert('Successful upload');
+    });
+  </script>
+</body>
+
+</html>
