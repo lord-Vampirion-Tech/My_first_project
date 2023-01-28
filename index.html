@@ -88,14 +88,12 @@
   const db = getDatabase();
   const dbRef = ref(db);
   const admin = $("#admin")
-  const DB = await get(DBRef(dbRef, "background"));
+  const DB = get(DBRef(dbRef, "background"));
   $("body").css({ "background-image": `url(` + DB.val().url + `)` })
 
   $(".admin").click(() => {
     $(".adminPanal").toggleClass('hide')
   })
-
-  console.log(DB.val().password);
 
   $("#submit").click(( ) => {
     if ($("#admin").val() == DB.val().password) {
